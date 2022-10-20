@@ -1,0 +1,67 @@
+
+Create a User class
+Attributes
+	user_details
+		user_name
+		name_first
+		name_last
+		eyes
+		hair
+		city
+		state
+	
+Methods
+	add_details
+		add user detials to dictionary		
+	aquire_user_details
+		get user name
+		check if name is blank
+		check if name exists
+		get other details
+		add details to dictionary
+		return order integer if success
+	show_user_details
+		verify specified user number exists
+		yes:
+		print specified user details
+		
+		no:
+		print not found
+	get_location
+		return city, state
+	get_name
+		return first + last
+	set_user_name
+	set_name_first
+	set_name_last
+	set_eyes
+	set_hair
+	set_city
+	set_state
+
+
+Create User List class
+Attributes
+	user_list
+		index number
+		user_name
+	
+
+Methods
+	add_user
+		store name in list
+	find_user_name
+		look up user name in list
+		return integer if found
+	show_user_list
+		iterate through user list
+		show user name and order number
+	sort_user_list
+		sort by user_name
+		
+
+Create Menu class
+	show_menu
+	
+	
+	
