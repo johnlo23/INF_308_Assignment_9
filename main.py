@@ -7,15 +7,20 @@
 class Employee:
 
     # Initialize an employee object. Attributes stored in a dictionary. Employee_id is required.
-    def __init__(self, employee_id):
-        self.employee_details = {'employee_id': employee_id,
-                                 'name_first': None,
-                                 'name_last': None,
-                                 'start_year': None,
-                                 'address': None,
-                                 'city': None,
-                                 'state': None
-                                 }
+    def __init__(self, employee_id, name_first=None, name_last=None,
+                 start_year=None, address=None, city=None,
+                 state=None):
+        # Initialize empty dictionary
+        self.employee_details = {}
+
+        # Set employee details with self methods
+        self.set_employee_id(employee_id)
+        self.set_name_first(name_first)
+        self.set_name_last(name_last)
+        self.set_start_year(start_year)
+        self.set_address(address)
+        self.set_city(city)
+        self.set_state(state)
 
     # Set employee details. Update dictionary.
     def set_employee_id(self, employee_id):
@@ -67,10 +72,27 @@ class Employee:
 
 
 class Manager(Employee):
-    def __init__(self, employee_id):
-        self.title = None
-        self.sub_list = None
-        super().__init__(self)
+    def __init__(self, employee_id, title=None, sub_list=[]):
+        super().__init__(employee_id)
+
+        # Set manager specific details with self methods
+        self.set_title(title)
+        self.set_sub_list(sub_list)
+
+    # Set manager details. Update dictionary.
+    def set_title(self, title):
+        self.employee_details['title'] = title
+
+    def set_sub_list(self, sub_list):
+        self.employee_details['sub_list'] = sub_list
+
+    def show_details(self):
+        # Call super method to show employee details
+        super().show_details()
+
+        # Print manager specific details
+        print(f"Title: {self.employee_details['title']}")
+        print(f"Subordinate List: {self.employee_details['sub_list']}")
 
 
 # Class to create employee List objects
@@ -249,6 +271,8 @@ def main():
         'ID279423', 'Gandolph', 'Verspasian', '2018', '200-20 3rd Ave Apt 12B', 'Portland', 'OR'))
     employee_list.add_employee('ID280121',
                                ('ID280121', 'Jandra', 'De La Cruz', '2021', '74 Carlos Silva Dr.', 'La Jolla', 'CA'))
+    employee_list.add_employee('ID268012',
+                               ('ID268012', 'Liangzhao', 'Ping', '2013', '800 Liberty Way', 'Portland', 'OR'))
 
     # Main Menu details
     main_menu_tuple = ('Add a new employee', 'Show employee information', 'Sort employee list', 'Quit')
