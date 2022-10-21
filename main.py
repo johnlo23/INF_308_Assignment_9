@@ -108,7 +108,9 @@ class Manager(Employee):
 
         # Print manager specific details
         print(f"Title: {self.employee_details['title']}")
-        print(f"Subordinate List: {self.employee_details['sub_list']}")
+        # Remove extra characters from subordinate list
+        sub_list = str(self.employee_details["sub_list"]).lstrip("[").rstrip("]").replace("'", "")
+        print(f'Subordinate List: {sub_list}')
 
 
 # Class to create employee List objects
