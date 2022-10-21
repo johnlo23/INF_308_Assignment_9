@@ -72,7 +72,10 @@ class Employee:
 
 
 class Manager(Employee):
+
+    # Initialize a manager object. Attributes stored in a dictionary. Employee_id is required.
     def __init__(self, employee_id, title=None, sub_list=None):
+        # pull in attributes from parent class
         super().__init__(employee_id)
 
         # Ensure sub_list is a list if none is given
@@ -83,21 +86,24 @@ class Manager(Employee):
         self.set_title(title)
         self.set_sub_list(sub_list)
 
-    # Set manager details. Update dictionary.
+    # Set manager details. Update dictionary
     def set_title(self, title):
         self.employee_details['title'] = title
 
     def set_sub_list(self, sub_list):
         self.employee_details['sub_list'] = sub_list
 
-    # Update all employee details at once.
+    # Update all employee details at once
     def add_details(self, details):
+        # employee details set by parent class
         super().add_details(details)
+
+        # manager specific details
         self.set_title(details[7])
         self.set_sub_list(details[8])
 
     def show_details(self):
-        # Call super method to show employee details
+        # Call super method to print employee details
         super().show_details()
 
         # Print manager specific details
@@ -108,20 +114,14 @@ class Manager(Employee):
 # Class to create employee List objects
 class EmployeeList:
 
-    # Initialize the employee list as an empty list
-    def __init__(self, employee_type=0):
+    # Initialize the employee list as an empty list, default employee type to non-manager (type=0)
+    def __init__(self):
         self.employees_list = list()
-        self.employee_type = employee_type
 
     # Add a new employee object and add to the employee list
     def add_employee(self, details):
         # Add the employee to the employee list and create a new employee object
-        if self.employee_type == 1:
-            # Manager
-            self.employees_list.append({'employee_id': details[0], 'details': Manager(details[0])})
-        else:
-            # Employee
-            self.employees_list.append({'employee_id': details[0], 'details': Employee(details[0])})
+        self.employees_list.append({'employee_id': details[0], 'details': Employee(details[0])})
         # For the latest employee in the employee list, add the acquired details
         self.employees_list[-1]['details'].add_details(details)
 
@@ -140,6 +140,19 @@ class EmployeeList:
     def get_employee_list(self):
         # Get employee list with list comprehension
         return [employee['employee_id'] for employee in self.employees_list]
+
+
+class ManagerList(EmployeeList):
+
+    def __init__(self):
+        super().__init__()
+
+    # Add a new employee object and add to the employee list
+    def add_employee(self, details):
+        # Add the employee to the employee list and create a new employee object
+        self.employees_list.append({'employee_id': details[0], 'details': Manager(details[0])})
+        # For the latest employee in the employee list, add the acquired details
+        self.employees_list[-1]['details'].add_details(details)
 
 
 # Class to create a menu with menu numbers
@@ -190,19 +203,15 @@ def get_employee_id():
 # Function to get new employee details from user
 def get_details(employee_id):
     # Get employee's name
-    print("Name details")
+    print("Personal details")
     first = input("Enter the first name: ").strip()
     last = input("Enter the last name: ").strip()
-    print()
-
-    # Get personal details
-    print("Personal description")
     start_year = input("Enter the start year: ").strip()
-    address = input("Enter the address: ").strip()
     print()
 
     # Get location details
     print("Location")
+    address = input("Enter the address: ").strip()
     city = input("Enter the city name: ").strip()
     state = input("Enter the state abbreviation: ").strip()
     print()
@@ -211,7 +220,7 @@ def get_details(employee_id):
 
 
 # Function to execute user choice
-def main_menu_action(menu_choice):
+def main_menu_action(menu_choice, employee_list, manager_list):
     # 1. Add a new employee
     if menu_choice == 1:
         add_employee(employee_list, get_employee_id())
@@ -229,7 +238,7 @@ def main_menu_action(menu_choice):
 
     # 4. Manager Menu
     elif menu_choice == 4:
-        create_manager_menu()
+        create_manager_menu(manager_list)
 
     # 5. Quit
     elif menu_choice == 5:
@@ -280,7 +289,8 @@ def app_quit():
     quit()
 
 
-def create_manager_menu():
+# Function to create the Manager sub-menu
+def create_manager_menu(manager_list):
     manager_menu_tuple = ('Add a new manager', 'Show manager information', 'Sort manager list', 'Exit')
     manager_menu_name = 'Manager Menu'
     manager_menu_details = {'title': manager_menu_name, 'items': manager_menu_tuple}
@@ -288,7 +298,7 @@ def create_manager_menu():
     manager_menu = PickMenu(manager_menu_details)
 
     menu_return = True
-    # loop the main menu until user quits
+    # loop the main menu until user exits
     while menu_return:
         # Show the main menu
         manager_menu.show_menu()
@@ -299,11 +309,11 @@ def create_manager_menu():
         print()
 
         # Execute user menu choice
-        menu_return = manager_menu_action(user_choice)
+        menu_return = manager_menu_action(user_choice, manager_list)
 
 
-# Function to execute user choice
-def manager_menu_action(menu_choice):
+# Function to execute user choice for Manager sub-menu
+def manager_menu_action(menu_choice, manager_list):
     # 1. Add a new employee
     if menu_choice == 1:
         add_manager(manager_list, get_employee_id())
@@ -319,57 +329,63 @@ def manager_menu_action(menu_choice):
         sort_employee_list(manager_list)
         print()
 
-    # 4. Quit
+    # 4. Exit back to Main Menu
     elif menu_choice == 4:
         return False
 
+    # Return to Manager sub-menu
     return True
 
 
-# Function to add a new employee
+# Function to add a new Manager
 def add_manager(manager_list_obj, employee_id):
-    # Check if employee ID is already in the employee list
+    # Check if employee ID is already in the manager list
     if not manager_list_obj.find_employee(employee_id.lower()) is None:
         # Employee ID already exists
         print('Sorry, that employee ID is already taken.')
     else:
         # Employee ID is available
-        employee_details = get_details(employee_id)
-        manager_details = get_manager_details(employee_id)
-        employee_details = employee_details + manager_details
-        manager_list_obj.add_employee(employee_details)
+        # Get employee and manager specific details - Add to Manager list and Object
+        manager_list_obj.add_employee(get_details(employee_id) + get_manager_details())
 
 
 # Function to get new manager details from user
-def get_manager_details(employee_id):
+def get_manager_details():
     # Get manager's title
     print("Manager details")
     title = input("Enter the manager's title: ").strip()
 
+    # Initialize empty list and counter
     sub_list = []
     cnt = 1
+    # Loop to add subordinates to list until user stops
     while True:
-        user_input = input(f"Enter subordinate number {cnt}: ").strip()
+        user_input = input(f"Enter Employee ID of subordinate number {cnt} (blank line to stop): ").strip()
         if len(user_input) > 0:
             sub_list.append(user_input)
         else:
             break
         cnt += 1
     print()
+
     return title, sub_list
 
 
 def main():
+    # Create the Employee List object
+    employee_list = EmployeeList()
+
+    # Create the Manager List object
+    manager_list = ManagerList()
 
     # Sample employee list Data
     employee_list.add_employee(('ID289435', 'John', 'Logiudice', '2015', '134 Market Square', 'Wala Wala', 'WA'))
     employee_list.add_employee(('ID279423', 'Gandolph', 'Verspasian', '2018', '200-20 3rd Ave Apt 12B', 'Portland', 'OR'))
     employee_list.add_employee(('ID280121', 'Jandra', 'De La Cruz', '2021', '74 Carlos Silva Dr.', 'La Jolla', 'CA'))
-    employee_list.add_employee(('ID268012', 'Liangzhao', 'Ping', '2013', '800 Liberty Way', 'Portland', 'OR'))
 
     manager_list.add_employee(('ID280121', 'Jandra', 'De La Cruz', '2021', '74 Carlos Silva Dr.', 'La Jolla', 'CA',
                                'Supervisor', ['ID234143', 'ID3423412', 'ID1231241', 'ID123123']))
-    manager_list.add_employee(('ID268012', 'Liangzhao', 'Ping', '2013', '800 Liberty Way', 'Portland', 'OR', 'Director',
+    manager_list.add_employee(('ID268012', 'Liang', 'Ping', '2013', '800 Liberty Way', 'Portland', 'OR', 'Director',
                                ['ID23241', 'ID193242', 'ID2341234', 'ID231249']))
 
     # Main Menu details
@@ -391,14 +407,9 @@ def main():
         print()
 
         # Execute user menu choice
-        main_menu_action(user_choice)
+        main_menu_action(user_choice, employee_list, manager_list)
 
 
 # Execute the main function
 if __name__ == '__main__':
-    # Create the Employee List object
-    employee_list = EmployeeList(0)
-
-    # Create the Manager List object
-    manager_list = EmployeeList(1)
     main()
